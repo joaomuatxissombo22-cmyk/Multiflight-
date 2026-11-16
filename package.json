@@ -4,15 +4,15 @@
   "version": "1.0.0",
   "description": "Website Institucional Oficial da Multiflight Angola — Aviation, Ground Handling, Offshore & Maritime Operations",
   "type": "module",
+  "main": "server.js",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
   },
   "scripts": {
     "dev": "tsx server.ts",
-    "start": "tsx server.ts",
-    "build": "vite build",
-    "build:fullstack": "vite build && esbuild server.ts --bundle --platform=node --packages=external --outfile=server.js",
+    "start": "node server.js",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=esm --packages=external --outfile=server.js",
     "preview": "vite preview --port=3000 --host=0.0.0.0",
     "test": "tsx --test tests/app.test.ts",
     "clean": "rm -rf dist server.js",

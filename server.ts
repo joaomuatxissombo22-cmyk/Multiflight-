@@ -25,7 +25,10 @@ async function startServer() {
   app.use('/api', createApiRouter());
 
   const distPath = path.resolve(__dirname, 'dist');
-  const isProd = process.env.NODE_ENV === 'production' && fs.existsSync(distPath);
+  const isRunningCompiledServerJs = __filename.endsWith('server.js');
+  const isProd =
+    (process.env.NODE_ENV === 'production' || isRunningCompiledServerJs) &&
+    fs.existsSync(distPath);
 
   if (isProd) {
     app.use(express.static(distPath));
