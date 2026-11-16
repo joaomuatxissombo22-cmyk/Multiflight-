@@ -248,7 +248,7 @@ export default function App() {
   const t = TRANSLATIONS[lang];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <div className="min-h-screen w-full overflow-x-hidden flex flex-col bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <Header
         currentRoute={currentRoute}
         onNavigate={handleNavigate}
@@ -260,7 +260,7 @@ export default function App() {
         onOpenPortal={() => setPortalOpen(true)}
       />
 
-      <main className="flex-1">{renderPage()}</main>
+      <main className="flex-1 w-full">{renderPage()}</main>
 
       <Footer onNavigate={handleNavigate} lang={lang} />
 
