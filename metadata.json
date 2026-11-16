@@ -1,0 +1,6 @@
+{
+  "name": "Multiflight Angola — Aviation, Ground Handling, Offshore & Maritime",
+  "description": "Website institucional oficial da Multiflight Angola. Soluções especializadas em aviação privada, assistência aeroportuária, Ground Handling, supervisão e operações offshore, inshore e marítimas em Angola.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
