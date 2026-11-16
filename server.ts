@@ -2,16 +2,18 @@ import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { createApiRouter } from './src/server/api.ts';
 
 dotenv.config();
 
 declare const __PROD_BUNDLE__: boolean | undefined;
 
-const rootDir = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
+const __filename = fileURLToPath(import.meta.url);
+const rootDir = path.dirname(__filename);
 const app = express();
 
-// Trust reverse proxies (Hostinger LiteSpeed / Cloud Run / Nginx)
+// Trust reverse proxies (Hostinger / Cloud Run / Nginx)
 app.set('trust proxy', 1);
 
 // Security & Cross-Device Compatibility Headers (Desktop + Mobile + WebView)
@@ -53,13 +55,14 @@ async function startServer() {
   const distPath = resolveDistPath();
   const isCompiledProd =
     typeof __PROD_BUNDLE__ !== 'undefined' && __PROD_BUNDLE__ === true;
+  const isRunningServerJs = __filename.endsWith('server.js');
   const hasBuiltIndex = fs.existsSync(path.join(distPath, 'index.html'));
   const isProd =
     isCompiledProd ||
+    isRunningServerJs ||
     (process.env.NODE_ENV === 'production' && hasBuiltIndex);
 
   if (isProd) {
-    // Serve static files from dist/ and fallback to public/ and src/assets/ if needed
     app.use(
       express.static(distPath, {
         maxAge: '1h',
@@ -107,7 +110,7 @@ async function startServer() {
   );
   const rawPort = process.env.PORT ? process.env.PORT.trim() : '';
 
-  // Support UNIX domain sockets / named pipes used by Hostinger LiteSpeed (lsnode.js) & Passenger
+  // Support UNIX domain sockets / named pipes if provided by Hostinger
   if (!isAiStudioContainer && rawPort && !/^\d+$/.test(rawPort)) {
     const server = app.listen(rawPort, () => {
       console.log(`Multiflight Angola Server listening on socket ${rawPort}`);
