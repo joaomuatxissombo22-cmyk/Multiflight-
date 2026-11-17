@@ -2,18 +2,16 @@ import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { createApiRouter } from './src/server/api.ts';
 
 dotenv.config();
 
 declare const __PROD_BUNDLE__: boolean | undefined;
 
-const __filename = fileURLToPath(import.meta.url);
-const rootDir = path.dirname(__filename);
+const rootDir = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
 const app = express();
 
-// Trust reverse proxies (Hostinger / Cloud Run / Nginx)
+// Trust reverse proxies (Hostinger LiteSpeed / Passenger / Cloud Run / Nginx)
 app.set('trust proxy', 1);
 
 // Security & Cross-Device Compatibility Headers (Desktop + Mobile + WebView)
@@ -51,49 +49,70 @@ function resolveDistPath(): string {
   return candidates[0];
 }
 
-async function startServer() {
-  const distPath = resolveDistPath();
-  const isCompiledProd =
-    typeof __PROD_BUNDLE__ !== 'undefined' && __PROD_BUNDLE__ === true;
-  const isRunningServerJs = __filename.endsWith('server.js');
-  const hasBuiltIndex = fs.existsSync(path.join(distPath, 'index.html'));
-  const isProd =
-    isCompiledProd ||
-    isRunningServerJs ||
-    (process.env.NODE_ENV === 'production' && hasBuiltIndex);
+const distPath = resolveDistPath();
+const isCompiledProd =
+  typeof __PROD_BUNDLE__ !== 'undefined' && __PROD_BUNDLE__ === true;
+const hasBuiltIndex = fs.existsSync(path.join(distPath, 'index.html'));
+const isProd =
+  isCompiledProd ||
+  (process.env.NODE_ENV === 'production' && hasBuiltIndex);
+const isAiStudioContainer = Boolean(
+  process.env.CONTROL_PLANE_PORT || process.env.DEFAULT_APP_PORT
+);
 
-  if (isProd) {
-    app.use(
-      express.static(distPath, {
-        maxAge: '1h',
-        etag: true,
-        index: false,
-      })
-    );
+if (isProd) {
+  // Synchronous production setup for Hostinger LiteSpeed (lsnode.js), Passenger & Node.js
+  app.use(
+    express.static(distPath, {
+      maxAge: '1h',
+      etag: true,
+      index: false,
+    })
+  );
 
-    const publicDir = path.resolve(rootDir, 'public');
-    if (fs.existsSync(publicDir)) {
-      app.use(express.static(publicDir, { maxAge: '1h', etag: true }));
+  const publicDir = path.resolve(rootDir, 'public');
+  if (fs.existsSync(publicDir)) {
+    app.use(express.static(publicDir, { maxAge: '1h', etag: true }));
+  }
+
+  const srcAssetsDir = path.resolve(rootDir, 'src/assets');
+  if (fs.existsSync(srcAssetsDir)) {
+    app.use('/src/assets', express.static(srcAssetsDir, { maxAge: '1h', etag: true }));
+  }
+
+  // SPA Fallback for all client routes on desktop and mobile
+  app.get('*', (_req, res) => {
+    const indexFile = path.join(distPath, 'index.html');
+    if (fs.existsSync(indexFile)) {
+      res.setHeader('Cache-Control', 'no-cache');
+      res.sendFile(indexFile);
+    } else {
+      res.status(200).send(
+        '<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Multiflight Angola</title></head><body><h1>Multiflight Angola</h1><p>Servidor operacional activo.</p></body></html>'
+      );
     }
+  });
 
-    const srcAssetsDir = path.resolve(rootDir, 'src/assets');
-    if (fs.existsSync(srcAssetsDir)) {
-      app.use('/src/assets', express.static(srcAssetsDir, { maxAge: '1h', etag: true }));
-    }
+  const rawPort = process.env.PORT ? process.env.PORT.trim() : '';
+  const listenTarget: string | number = isAiStudioContainer
+    ? Number(process.env.DEFAULT_APP_PORT) || 3000
+    : rawPort && /^\d+$/.test(rawPort)
+      ? Number(rawPort)
+      : rawPort || 3000;
 
-    // SPA Fallback for all client routes on desktop and mobile
-    app.get('*', (_req, res) => {
-      const indexFile = path.join(distPath, 'index.html');
-      if (fs.existsSync(indexFile)) {
-        res.setHeader('Cache-Control', 'no-cache');
-        res.sendFile(indexFile);
-      } else {
-        res.status(200).send(
-          '<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Multiflight Angola</title></head><body><h1>Multiflight Angola</h1><p>Servidor operacional activo.</p></body></html>'
-        );
-      }
-    });
-  } else {
+  // Call app.listen(listenTarget, callback) synchronously without host IP
+  // so LiteSpeed lsnode.js / Passenger intercepts http.Server.prototype.listen cleanly
+  const server = app.listen(listenTarget, () => {
+    console.log(`Multiflight Angola Production Server listening on ${listenTarget}`);
+  });
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
+  server.on('error', (err: NodeJS.ErrnoException) => {
+    console.error('Production server listen error:', err.message);
+  });
+} else {
+  // Development mode (AI Studio Vite middleware on port 3000)
+  async function startDevServer() {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: {
@@ -103,50 +122,16 @@ async function startServer() {
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  }
 
-  const isAiStudioContainer = Boolean(
-    process.env.CONTROL_PLANE_PORT || process.env.DEFAULT_APP_PORT
-  );
-  const rawPort = process.env.PORT ? process.env.PORT.trim() : '';
-
-  // Support UNIX domain sockets / named pipes if provided by Hostinger
-  if (!isAiStudioContainer && rawPort && !/^\d+$/.test(rawPort)) {
-    const server = app.listen(rawPort, () => {
-      console.log(`Multiflight Angola Server listening on socket ${rawPort}`);
+    const devPort = Number(process.env.DEFAULT_APP_PORT) || 3000;
+    app.listen(devPort, '0.0.0.0', () => {
+      console.log(`Multiflight Angola Dev Server running on http://0.0.0.0:${devPort}`);
     });
-    server.keepAliveTimeout = 65000;
-    server.headersTimeout = 66000;
-    return;
   }
 
-  const preferredPort = isAiStudioContainer
-    ? Number(process.env.DEFAULT_APP_PORT) || 3000
-    : isProd
-      ? Number(rawPort) || 3000
-      : 3000;
-
-  const server = app.listen(preferredPort, '0.0.0.0', () => {
-    console.log(`Multiflight Angola Server running on http://0.0.0.0:${preferredPort}`);
-  });
-  server.keepAliveTimeout = 65000;
-  server.headersTimeout = 66000;
-
-  server.on('error', (err: NodeJS.ErrnoException) => {
-    if (err.code === 'EADDRINUSE' && preferredPort !== 3000) {
-      const fallbackServer = app.listen(3000, '0.0.0.0', () => {
-        console.log('Multiflight Angola Server running on http://0.0.0.0:3000');
-      });
-      fallbackServer.keepAliveTimeout = 65000;
-      fallbackServer.headersTimeout = 66000;
-    } else {
-      console.error('Server error:', err);
-    }
+  startDevServer().catch((err) => {
+    console.error('Failed to start dev server:', err);
   });
 }
-
-startServer().catch((err) => {
-  console.error('Failed to start server:', err);
-});
 
 export default app;

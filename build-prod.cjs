@@ -34,13 +34,13 @@ try {
 copyDirRecursive(publicDir, distDir);
 copyDirRecursive(srcAssets, distSrcAssets);
 
-console.log('==> Bundling Express Production Server (server.js in ESM format)...');
+console.log('==> Bundling self-contained Express Production Server (server.js in CommonJS format)...');
 try {
   execSync(
-    'npx esbuild server.ts --bundle --platform=node --target=node18 --format=esm --packages=external --define:__PROD_BUNDLE__=true --outfile=server.js',
+    'npx esbuild server.ts --bundle --platform=node --target=node18 --format=cjs --external:vite --define:__PROD_BUNDLE__=true --outfile=server.js',
     { stdio: 'inherit', cwd: rootDir }
   );
-  console.log('==> server.js bundled successfully (ESM, Node >= 18 compatible).');
+  console.log('==> server.js bundled successfully (CommonJS, Node >= 18 & LiteSpeed lsnode.js compatible).');
 } catch (err) {
   const serverJs = path.join(rootDir, 'server.js');
   if (fs.existsSync(serverJs)) {

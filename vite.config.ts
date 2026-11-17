@@ -1,14 +1,11 @@
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { defineConfig } from 'vite';
+import { defineConfig, type UserConfig } from 'vite';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+export default defineConfig(async (_env): Promise<UserConfig> => {
+  const { default: react } = await import('@vitejs/plugin-react');
+  const { default: tailwindcss } = await import('@tailwindcss/vite');
 
-export default defineConfig(() => {
   return {
     plugins: [
       react(),
@@ -18,13 +15,13 @@ export default defineConfig(() => {
       // in production builds. Do not remove.
       {
         name: 'copy-unbundled-src-assets',
-        apply: 'build',
+        apply: 'build' as const,
         closeBundle(error?: Error): void {
           if (error) {
             return;
           }
-          const distDir = path.resolve(__dirname, 'dist');
-          const srcAssets = path.resolve(__dirname, 'src/assets');
+          const distDir = path.resolve(process.cwd(), 'dist');
+          const srcAssets = path.resolve(process.cwd(), 'src/assets');
           const distAssets = path.resolve(distDir, 'src/assets');
           if (fs.existsSync(distDir) && fs.existsSync(srcAssets)) {
             fs.cpSync(srcAssets, distAssets, { recursive: true, force: true });
@@ -34,7 +31,7 @@ export default defineConfig(() => {
     ],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(process.cwd(), '.'),
       },
     },
     esbuild: {

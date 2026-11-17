@@ -3,7 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "description": "Website Institucional Oficial da Multiflight Angola — Aviation, Ground Handling, Offshore & Maritime Operations",
-  "type": "module",
   "main": "server.js",
   "engines": {
     "node": ">=18.0.0",
