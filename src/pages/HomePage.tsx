@@ -16,6 +16,8 @@ import {
   REAL_IMAGES,
   OFFICIAL_LOGO_URL,
 } from '../components/VisualAssets.tsx';
+import { LatestNewsSection } from '../components/LatestNewsSection.tsx';
+
 
 interface HomePageProps {
   lang: Language;
@@ -915,7 +917,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* 8. SAFETY & QUALITY + COMMERCIAL CTA BANNER */}
+      {/* 8. LATEST NEWS: ANGOLA AVIATION & LOGISTICS UPDATES */}
+      <LatestNewsSection lang={lang} onNavigate={onNavigate} />
+
+      {/* 9. SAFETY & QUALITY + COMMERCIAL CTA BANNER */}
       <section className="py-16 lg:py-20 bg-[#1769AA] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">

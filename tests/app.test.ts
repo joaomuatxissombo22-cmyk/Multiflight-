@@ -183,9 +183,25 @@ describe('Multiflight Angola — Institutional Website & API Automated Suite', (
     assert.equal(validData.recipientEmail, 'geral@multiflightangola.com');
   });
 
+  it('GET /api/news returns Angolan aviation and logistics updates with category filtering', async () => {
+    const allRes = await fetch(`${baseUrl}/api/news`);
+    assert.equal(allRes.status, 200);
+    const allData = await allRes.json();
+    assert.equal(allData.status, 'ok');
+    assert.ok(Array.isArray(allData.items));
+    assert.ok(allData.items.length >= 4);
+
+    const offshoreRes = await fetch(`${baseUrl}/api/news?category=offshore`);
+    assert.equal(offshoreRes.status, 200);
+    const offshoreData = await offshoreRes.json();
+    assert.equal(offshoreData.items.length, 1);
+    assert.equal(offshoreData.items[0].category, 'offshore');
+  });
+
   it('sanitizes HTML angle brackets from user inputs', () => {
     const cleaned = sanitizeText('<script>alert("xss")</script>Multiflight');
     assert.ok(!cleaned.includes('<'));
     assert.ok(!cleaned.includes('>'));
   });
 });
+

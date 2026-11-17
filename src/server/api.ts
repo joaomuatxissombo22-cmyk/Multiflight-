@@ -173,6 +173,205 @@ export function createApiRouter() {
     return users.get(payload.email.toLowerCase()) || null;
   }
 
+  const industryNews = [
+    {
+      id: 'news-angola-nbj-executive-2026',
+      code: 'ANG-AV-01',
+      category: 'aviation',
+      publishedAt: '2026-11-15',
+      location: 'Luanda (NBJ / LAD), Angola',
+      source: 'Observatório de Aviação & Infraestruturas de Angola',
+      relatedService: 'Aviation Services',
+      sceneType: 'executive-jet-apron',
+      featured: true,
+      pt: {
+        categoryLabel: 'Aviação & Infraestrutura Aeroportuária',
+        title:
+          'Expansão das Operações Executivas e de Carga no Hub Aeroportuário de Luanda Reforça Conectividade Regional',
+        excerpt:
+          'A coordenação entre o Aeroporto Internacional 4 de Fevereiro (LAD) e o Novo Aeroporto Internacional Dr. António Agostinho Neto (NBJ) impulsiona a eficiência nas escalas técnicas, aviação executiva e logística aérea na África Austral.',
+        body: [
+          'O sector da aviação civil e executiva em Angola regista um crescimento contínuo na movimentação de aeronaves corporativas, voos charter e operações de apoio logístico energético a partir de Luanda.',
+          'A articulação operacional entre as infraestruturas aeroportuárias da capital angolana exige serviços especializados de assistência em escala, despacho operacional, coordenação de slots e gestão de aeronavegabilidade contínua (CAMO) com rigor internacional.',
+          'A Multiflight Angola acompanha esta evolução disponibilizando assistência técnica 24/7 sob coordenação prévia, supervisão dedicada de placa e apoio integral às tripulações e passageiros executivos.',
+        ],
+        highlights: [
+          'Optimização de tempos de turnaround em escalas técnicas e executivas em Luanda',
+          'Reforço dos padrões de segurança operacional e conformidade regulamentar (ANAC Angola)',
+          'Integração directa com rotas domésticas para Soyo, Cabinda e Catumbela',
+        ],
+      },
+      en: {
+        categoryLabel: 'Aviation & Airport Infrastructure',
+        title:
+          'Expansion of Executive and Cargo Operations at Luanda Airport Hub Strengthens Regional Connectivity',
+        excerpt:
+          'Operational coordination between 4 de Fevereiro International Airport (LAD) and Dr. António Agostinho Neto International Airport (NBJ) drives higher efficiency in technical stops, private aviation, and air logistics across Southern Africa.',
+        body: [
+          'Angola’s civil and executive aviation sector continues to record steady growth in corporate aircraft movements, charter flights, and energy logistics air support out of Luanda.',
+          'Seamless coordination across Luanda’s airport infrastructure demands specialized ground support, flight dispatch, slot coordination, and Continuing Airworthiness Management (CAMO) aligned with international standards.',
+          'Multiflight Angola supports this expansion by providing dedicated apron supervision, turnaround coordination, and comprehensive flight crew and VIP passenger assistance.',
+        ],
+        highlights: [
+          'Optimized turnaround times for technical and executive stops in Luanda',
+          'Strengthened operational safety and regulatory compliance (ANAC Angola)',
+          'Direct synchronization with domestic air corridors serving Soyo, Cabinda, and Catumbela',
+        ],
+      },
+    },
+    {
+      id: 'news-angola-ground-handling-2026',
+      code: 'ANG-GH-02',
+      category: 'ground-handling',
+      publishedAt: '2026-11-12',
+      location: 'Luanda (LAD), Angola',
+      source: 'Boletim Operacional de Assistência em Terra',
+      relatedService: 'Ground Handling Supervision',
+      sceneType: 'supervision',
+      featured: false,
+      pt: {
+        categoryLabel: 'Ground Handling & Supervisão',
+        title:
+          'Novos Protocolos de Supervisão de Rampa Elevam a Segurança e Pontualidade nas Escalas em Angola',
+        excerpt:
+          'A implementação de auditorias presenciais de rampa e listas de verificação digitalizadas reduz desvios operacionais e assegura o cumprimento rigoroso de SLA em voos privados e charters.',
+        body: [
+          'A exigência crescente de operadores internacionais e companhias de aviação executiva em Angola tem colocado a supervisão presencial de Ground Handling no centro da eficiência aeroportuária.',
+          'O acompanhamento directo das operações de carregamento, abastecimento, GPU, limpeza técnica e assistência a passageiros garante que cada escala cumpra integralmente os manuais operacionais das companhias.',
+          'As equipas de Ground Handling Services e Ground Handling Supervision da Multiflight Angola asseguram relatórios operacionais imediatos e interlocução única entre tripulação, autoridades aeroportuárias e prestadores.',
+        ],
+        highlights: [
+          'Controlo presencial de segurança de placa (Ramp Safety) e GSE',
+          'Coordenação rápida com alfândega, imigração e autoridades aeroportuárias',
+          'Relatórios detalhados de escala (Turnaround Reports) em tempo real',
+        ],
+      },
+      en: {
+        categoryLabel: 'Ground Handling & Supervision',
+        title:
+          'New Ramp Supervision Protocols Elevate Turnaround Safety and Punctuality Across Angolan Airports',
+        excerpt:
+          'On-site apron audits and standardized turnaround checklists minimize operational delays and ensure strict SLA compliance for private and charter flights.',
+        body: [
+          'Rising standards among international operators and executive flight departments in Angola have positioned on-site Ground Handling Supervision at the core of airport efficiency.',
+          'Direct oversight of loading, fueling, GPU hookup, cabin servicing, and passenger handling ensures every turnaround adheres strictly to operator flight manuals.',
+          'Multiflight Angola’s Ground Handling Services and Supervision teams deliver immediate turnaround reporting and single-point coordination between flight crews, airport authorities, and service providers.',
+        ],
+        highlights: [
+          'On-site Ramp Safety and Ground Support Equipment (GSE) oversight',
+          'Streamlined customs, immigration, and airport authority clearance',
+          'Real-time operational Turnaround Reports for flight departments',
+        ],
+      },
+    },
+    {
+      id: 'news-angola-offshore-energy-2026',
+      code: 'ANG-OF-03',
+      category: 'offshore',
+      publishedAt: '2026-11-08',
+      location: 'Soyo & Bacia do Baixo Congo, Angola',
+      source: 'Logística Energética & Offshore Angola',
+      relatedService: 'Offshore Operations',
+      sceneType: 'offshore',
+      featured: false,
+      pt: {
+        categoryLabel: 'Logística Offshore & Energia',
+        title:
+          'Integração Multimodal Aérea e Marítima Acelera Mobilização de Equipas para Blocos Offshore em Angola',
+        excerpt:
+          'A sincronização entre transporte aéreo de passageiros/carga urgente, helicópteros offshore e embarcações de apoio reduz tempos de trânsito nas bases de Luanda, Soyo e Cabinda.',
+        body: [
+          'As campanhas de exploração, manutenção e produção nos blocos offshore da Bacia do Baixo Congo e Bacia do Kwanza dependem de cadeias logísticas ininterruptas entre aeroportos e terminais marítimos.',
+          'A articulação integrada entre voos de ligação, operações de helicópteros e movimentação de embarcações de suporte (PSV/AHTS e crew boats) permite optimizar a rotação de pessoal técnico e o envio de componentes críticos.',
+          'A divisão de Offshore Operations da Multiflight Angola coordena fluxos logísticos ponta-a-ponta com foco absoluto em normas internacionais de HSE.',
+        ],
+        highlights: [
+          'Coordenação sincronizada de rotação de tripulações (Crew Change) em Luanda e Soyo',
+          'Apoio dedicado a helicópteros e logística de carga crítica para plataformas',
+          'Conformidade rigorosa com padrões de Saúde, Segurança e Ambiente (HSE)',
+        ],
+      },
+      en: {
+        categoryLabel: 'Offshore & Energy Logistics',
+        title:
+          'Multimodal Air and Marine Synchronization Accelerates Crew Mobilization for Angolan Offshore Blocks',
+        excerpt:
+          'Coordinating fixed-wing air transport, offshore helicopters, and support vessels cuts transit times across operational bases in Luanda, Soyo, and Cabinda.',
+        body: [
+          'Exploration, maintenance, and production campaigns across Angola’s Lower Congo and Kwanza Basin offshore blocks rely on uninterrupted logistics chains linking airports and marine terminals.',
+          'Integrated scheduling between fixed-wing flights, rotary-wing transfers, and offshore support vessels (PSV/AHTS and crew boats) optimizes technical crew rotations and urgent spare-parts delivery.',
+          'Multiflight Angola’s Offshore Operations division manages end-to-end mobilization workflows under strict international HSE standards.',
+        ],
+        highlights: [
+          'Synchronized Crew Change coordination across Luanda and Soyo hubs',
+          'Dedicated rotary-wing support and time-critical offshore cargo logistics',
+          'Strict adherence to international Health, Safety, and Environment (HSE) protocols',
+        ],
+      },
+    },
+    {
+      id: 'news-angola-maritime-inshore-2026',
+      code: 'ANG-MA-04',
+      category: 'maritime',
+      publishedAt: '2026-11-03',
+      location: 'Porto de Luanda & Corredor do Lobito, Angola',
+      source: 'Actualidade Marítima & Portuária de Angola',
+      relatedService: 'Maritime Operations',
+      sceneType: 'maritime',
+      featured: false,
+      pt: {
+        categoryLabel: 'Operações Marítimas & Inshore',
+        title:
+          'Modernização da Logística Portuária e Costeira Dinamiza Operações Inshore e Marítimas na Costa Angolana',
+        excerpt:
+          'O fortalecimento das operações nos terminais portuários de Luanda, Lobito e Namibe amplia a capacidade de resposta para assistência a embarcações e logística costeira.',
+        body: [
+          'O desenvolvimento dos corredores logísticos e terminais portuários ao longo da costa de Angola tem impulsionado a procura por serviços especializados de coordenação marítima e operações inshore.',
+          'A gestão eficiente de escalas portuárias, abastecimento técnico, logística de cais e transporte em águas interiores requer acompanhamento operacional permanente no terreno.',
+          'A Multiflight Angola disponibiliza equipas técnicas para supervisão portuária, coordenação de embarcações de apoio e integração entre logística marítima e aérea.',
+        ],
+        highlights: [
+          'Apoio logístico e supervisão técnica nos principais portos angolanos',
+          'Coordenação de operações Inshore em zonas costeiras e terminais fluviais',
+          'Interligação directa entre operações portuárias e transporte aéreo executivo/carga',
+        ],
+      },
+      en: {
+        categoryLabel: 'Maritime & Inshore Operations',
+        title:
+          'Port and Coastal Logistics Modernization Boosts Inshore and Maritime Operations Along the Angolan Coast',
+        excerpt:
+          'Upgraded operational capacity across port terminals in Luanda, Lobito, and Namibe strengthens vessel support, quayside coordination, and coastal logistics.',
+        body: [
+          'Ongoing growth across Angola’s port terminals and logistics corridors has increased demand for specialized maritime coordination and inshore operational support.',
+          'Efficient management of vessel port calls, technical provisioning, quayside logistics, and sheltered-water operations requires continuous on-site supervision.',
+          'Multiflight Angola deploys dedicated technical teams for port supervision, support vessel coordination, and seamless air-to-sea logistics integration.',
+        ],
+        highlights: [
+          'Technical supervision and logistics support across major Angolan ports',
+          'Inshore operational coordination in coastal zones and sheltered terminals',
+          'Direct integration between port operations and executive/cargo aviation',
+        ],
+      },
+    },
+  ];
+
+  // GET /api/news — Returns recent Angolan aviation & logistics industry updates
+  router.get('/news', (req: Request, res: Response) => {
+    const category = sanitizeText(req.query.category, 40).toLowerCase();
+    const filtered =
+      category && category !== 'all'
+        ? industryNews.filter((item) => item.category === category)
+        : industryNews;
+
+    res.json({
+      status: 'ok',
+      updatedAt: new Date().toISOString(),
+      total: filtered.length,
+      items: filtered,
+    });
+  });
+
   // Health & Institutional Info
   router.get('/health', (_req: Request, res: Response) => {
     res.json({
